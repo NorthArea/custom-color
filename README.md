@@ -8,7 +8,7 @@ use [SASS](https://sass-lang.com/)
 	$ sass scss/styles.sass scss/styles.css --style compressed
 ```
 
-or insert this cod in your October theme:
+or insert this code in your October theme:
 
 ```html
 	<head>
