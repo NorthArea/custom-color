@@ -1,13 +1,6 @@
 <?php
 require __DIR__ . '/api.php';
 
-if (isset($_POST['submit'])) {
-    //$fileId = 
-    echo "File ID: <br>";
-    print_r($_POST);
-    echo "Test";
-}
-
 // Get the API client and construct the service object.
 $client = getClient();
 $service = new Google_Service_Drive($client);
@@ -19,6 +12,29 @@ $optParams = array(
 );
 
 $results = $service->files->listFiles($optParams);
+
+if (isset($_POST['submit'])) {
+    //$fileId = 
+    echo "File ID: <br>";
+    print_r($_POST);
+    echo "Test";
+    $fileId = "1R7jGz9otC4rpxbIZ5Tbp1XuIAzmNqWAc"; // Google File ID
+    $content = $service->files->get($fileId, array("alt" => "media"));
+    
+    // Open file handle for output.
+    
+    $outHandle = fopen("test.test", "w+");
+    
+    // Until we have reached the EOF, read 1024 bytes at a time and write to the output file handle.
+    
+    while (!$content->getBody()->eof()) {
+            fwrite($outHandle, $content->getBody()->read(1024));
+    }
+    
+    // Close output file handle.
+    
+    fclose($outHandle);
+}
 
 //$results2 = $service->teamdrives;
 //$results2 = $service::DRIVE;
