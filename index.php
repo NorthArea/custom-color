@@ -1,8 +1,8 @@
 <?php
   // Google vendor
-  require __DIR__ . '/vendor/autoload.php';
+  require_once __DIR__ . '/vendor/autoload.php';
   // Google api with the authorized client object
-  require __DIR__ . '/api.php';
+  require_once __DIR__ . '/vendor/api.php';
 
   // Get the API client and construct the service object.
   $client = getClient();
@@ -15,10 +15,16 @@
   );
   $results = $service->files->listFiles($optParams);
   
-  // Submit Form
+  // !Submit Form!
   if (isset($_POST['submit'])) {
-    echo "File ID: <br>";
-    print_r($_POST);
+    $zip = new ZipArchive();
+    $filename = "./tmp/".time().".zip";
+    
+    // Create zip file
+    if ($zip->open($filename, ZipArchive::CREATE)!==TRUE) {
+        exit("Невозможно открыть <$filename>\n");
+    }
+    
     // Create array with file id from Google drive
     foreach($_POST as $key=>$value){
       if($key == "submit") break;
@@ -26,59 +32,40 @@
       $content = $service->files->get($fileId, array("alt" => "media"));
       
       // Open file handle for output.
-      
-      $outHandle = fopen("$value", "w+");
+      $outHandle = fopen("./tmp/$value", "w+");
       
       // Until we have reached the EOF, read 1024 bytes at a time and write to the output file handle.
-      
       while (!$content->getBody()->eof()) {
               fwrite($outHandle, $content->getBody()->read(1024));
       }
       
       // Close output file handle.
-      
       fclose($outHandle);
-      echo "Done.\n";
+      $zip->addFile("./tmp/$value",$value);
     }
+    $zip->close();
+    
+    // Send zip file
+    if (file_exists($filename)) {
+      header('Content-Description: File Transfer');
+      header('Content-Type: application/octet-stream');
+      header('Content-Disposition: attachment; filename="'.basename($filename).'"');
+      header('Expires: 0');
+      header('Cache-Control: must-revalidate');
+      header('Pragma: public');
+      header('Content-Length: ' . filesize($filename));
+      readfile($filename);
+      
+      // Clean Dir
+      if (file_exists('./tmp/')) {
+        foreach (glob('./tmp/*') as $file) {
+          unlink($file);
+        }
+      }
+      exit;
+    }
+    
   }
-  
-  /*
-  // Submit Form
-  if (isset($_POST['submit'])) {
-      //$fileId = 
-      echo "File ID: <br>";
-      print_r($_POST);
-      echo "Test";
-      
-      // Create array with file id from Google drive
-      $arr = [];
-      foreach($_POST as $key=>$value){
-        if($key == "submit") break;
-        $arr[] = $key;
-      }
-      $fileId = '1CV75jJ7Cua61GrlXZOfNIRJ-hNldBhgy';
-      $content = $service->files->get($fileId, array("alt" => "media"))->getSize();
-      print_r($content)
-      
-      
-      $fileId = '1CV75jJ7Cua61GrlXZOfNIRJ-hNldBhgy';
-      $content = $service->files->get($fileId, array("alt" => "media"));
-      
-      // Open file handle for output.
-      
-      $outHandle = fopen("destination", "w+");
-      
-      // Until we have reached the EOF, read 1024 bytes at a time and write to the output file handle.
-      
-      while (!$content->getBody()->eof()) {
-              fwrite($outHandle, $content->getBody()->read(1024));
-      }
-      
-      // Close output file handle.
-      
-      fclose($outHandle);
-      echo "Done.\n";
-  */
 
 ?>
 
