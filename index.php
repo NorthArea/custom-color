@@ -64,9 +64,7 @@
       }
       exit;
     }
-    
   }
-
 ?>
 
 <!DOCTYPE html>
