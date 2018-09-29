@@ -1,11 +1,13 @@
 <?php
-require __DIR__ . '/google/api.php';
 
 class Model_main{
   
 	public function get_data(){
 	  
     try {
+      // Include API 
+      require_once __DIR__ . '/google/api.php';
+      
       // Get the API client and construct the service object.
       $client = getClient();
       $service = new Google_Service_Drive($client);
@@ -26,6 +28,9 @@ class Model_main{
 	public function get_file($arr){
 	  
 	  try {
+	    // Include API 
+      require_once __DIR__ . '/google/api.php';
+	    
   	  // Get the API client and construct the service object.
       $client = getClient();
       $service = new Google_Service_Drive($client);
