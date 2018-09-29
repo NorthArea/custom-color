@@ -18,7 +18,7 @@ class Controller_main{
 	
 	// Output download files
 	function action_download(){
-    if(count($_POST)>10) return Route::ErrorPage404();
+    if((count($_POST)>10) || (count($_POST)<1) ) return Route::ErrorPage404();
     $filename = $this->model->get_file($_POST);
     
     if($filename == false){
