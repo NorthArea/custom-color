@@ -23,7 +23,6 @@ class Route{
 		$action_name = 'action_'.$action_name;
 
 		// подцепляем файл с классом модели (файла модели может и не быть)
-
 		$model_file = strtolower($model_name).'.php';
 		$model_path = "application/models/".$model_file;
 		if(file_exists($model_path)){
@@ -37,10 +36,6 @@ class Route{
 			include "application/controllers/".$controller_file;
 		}
 		else {
-			/*
-			правильно было бы кинуть здесь исключение,
-			но для упрощения сразу сделаем редирект на страницу 404
-			*/
 			Route::ErrorPage404();
 		}
 		
@@ -49,11 +44,9 @@ class Route{
 		$action = $action_name;
 		
 		if(method_exists($controller, $action)){
-			// вызываем действие контроллера
 			$controller->$action();
 		}
 		else{
-			// здесь также разумнее было бы кинуть исключение
 			Route::ErrorPage404();
 		}
 	
