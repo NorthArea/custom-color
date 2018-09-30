@@ -12,6 +12,10 @@ class Model_main{
       $client = getClient();
       $service = new Google_Service_Drive($client);
       
+      if (!$service) {
+        throw new Exception('Connect to api is fail');
+      }
+      
       // Print the names and IDs for up to 10 files.
       $optParams = array(
         'pageSize' => 10,
@@ -19,6 +23,7 @@ class Model_main{
       );
       $results = $service->files->listFiles($optParams);
     } catch(Exception $e) {
+      Logger::getLogger('Connect to Google')->log($e);
       return false;
     }
     		
@@ -34,6 +39,10 @@ class Model_main{
   	  // Get the API client and construct the service object.
       $client = getClient();
       $service = new Google_Service_Drive($client);
+      
+      if (!$service) {
+        throw new Exception('Connect to api is fail');
+      }
       
       $zip = new ZipArchive();
       $filename = "./tmp/".time().".zip";
@@ -54,7 +63,7 @@ class Model_main{
         
         // Until we have reached the EOF, read 1024 bytes at a time and write to the output file handle.
         while (!$content->getBody()->eof()) {
-                fwrite($outHandle, $content->getBody()->read(1024));
+          fwrite($outHandle, $content->getBody()->read(1024));
         }
         
         // Close output file handle.
@@ -62,7 +71,9 @@ class Model_main{
         $zip->addFile("./tmp/$value",$value);
       }
       $zip->close();
+      
 	  } catch(Exception $e) {
+	    Logger::getLogger('Connect to Google')->log($e);
 	    return false;
 	  }
 	  
