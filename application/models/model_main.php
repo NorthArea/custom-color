@@ -23,7 +23,7 @@ class Model_main{
       );
       $results = $service->files->listFiles($optParams);
     } catch(Exception $e) {
-      Logger::getLogger('Get-Data')->log($e);
+      Logger::getLogger('error')->log($e);
       return false;
     }
     		
@@ -77,7 +77,7 @@ class Model_main{
       }
       
 	  } catch(Exception $e) {
-	    Logger::getLogger('Get-File')->log($e);
+	    Logger::getLogger('error')->log($e);
 	    return false;
 	  }
 	  

@@ -18,11 +18,15 @@ class Controller_main{
 	
 	// Output download files
 	function action_download(){
-    if((count($_POST)>10) || (count($_POST)<1) ) return Route::ErrorPage404();
+    if((count($_POST)>10) || (count($_POST)<1)){
+      Logger::getLogger('error')->log("POST>10 or POST<1");
+      return Route::ErrorPage404();
+    }
     $filename = $this->model->get_file($_POST);
     
     if($filename == false){
-	    Route::ErrorPage404();
+      Logger::getLogger('error')->log("Model return false");
+	    return Route::ErrorPage404();
 	  } else {
       header('Content-Description: File Transfer');
       header('Content-Type: application/octet-stream');
