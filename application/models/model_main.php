@@ -23,7 +23,7 @@ class Model_main{
       );
       $results = $service->files->listFiles($optParams);
     } catch(Exception $e) {
-      Logger::getLogger('Connect to Google')->log($e);
+      Logger::getLogger('Get-Data')->log($e);
       return false;
     }
     		
@@ -72,8 +72,12 @@ class Model_main{
       }
       $zip->close();
       
+      if(!file_exists($filename)){
+        throw new Exception('Fail to create a file');
+      }
+      
 	  } catch(Exception $e) {
-	    Logger::getLogger('Connect to Google')->log($e);
+	    Logger::getLogger('Get-File')->log($e);
 	    return false;
 	  }
 	  
