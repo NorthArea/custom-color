@@ -1,7 +1,5 @@
 <?php
-class Logger 
-{
-    //статические переменные
+class Logger {
     public static $PATH;
     protected static $loggers=array();
  
