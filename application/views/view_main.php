@@ -1,6 +1,20 @@
 <div class="row">
   <div class="col-sm"></div>
   <div class="col-sm">
+    <form action="/main/index/" method="GET">
+      <div class="row">
+        <div class="col">
+          <div class="input-group">
+            <select
+              class="custom-select" id="inputGroupSelect04" name="limit">
+              <option value="10">10</option>
+              <option value="5">5</option>
+              </select>
+              <div class="input-group-append"><button class="btn btn-outline-secondary" type="submit">Сортировать</button></div>
+          </div>
+        </div>
+      </div>
+    </form>
     <form action="/main/download/" method="POST">
       <div class="checkbox">
         <label>

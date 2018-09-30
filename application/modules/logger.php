@@ -1,6 +1,10 @@
 <?php
 class Logger {
-    public static $PATH;
+  
+    protected static $LOG_ON = LOGGER;
+    protected static $PRINT_ON = LOGGER_PRINT;
+    
+    protected static $PATH = LOGGER_PATH;
     protected static $loggers=array();
  
     protected $name;
@@ -8,21 +12,26 @@ class Logger {
     protected $fp;
  
     public function __construct($name, $file=null){
+      
         $this->name=$name;
         $this->file=$file;
- 
-        $this->open();
+        
+        if(self::$LOG_ON){
+          $this->open();
+        }
     }
  
     public function open(){
+      
         if(self::$PATH==null){
             return ;
         }
- 
+        
         $this->fp=fopen($this->file==null ? self::$PATH.'/'.$this->name.'.log' : self::$PATH.'/'.$this->file,'a+');
     }
  
     public static function getLogger($name='root',$file=null){
+      
         if(!isset(self::$loggers[$name])){
             self::$loggers[$name]=new Logger($name, $file);
         }
@@ -31,9 +40,9 @@ class Logger {
     }
  
     public function log($message){
+        // Log aray
         if(!is_string($message)){
             $this->logPrint($message);
- 
             return ;
         }
  
@@ -42,32 +51,38 @@ class Logger {
         $log.='['.date('D M d H:i:s Y',time()).'] ';
         if(func_num_args()>1){
             $params=func_get_args();
- 
             $message=call_user_func_array('sprintf',$params);
         }
  
         $log.=$message;
         $log.="\n";
- 
+        
+        // Write log
         $this->_write($log);
     }
  
     public function logPrint($obj){
-        ob_start();
- 
-        print_r($obj);
- 
-        $ob=ob_get_clean();
-        $this->log($ob);
+      if(self::$PRINT_ON){
+          // Buffer
+          ob_start();
+   
+          print_r($obj);
+   
+          $ob=ob_get_clean();
+          $this->log($ob);
+      }
     }
  
     protected function _write($string){
+      if(self::$LOG_ON){
         fwrite($this->fp, $string);
- 
         echo $string;
+      }
     }
  
     public function __destruct(){
+      if(self::$LOG_ON){
         fclose($this->fp);
+      }
     }
 }

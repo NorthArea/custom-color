@@ -1,41 +1,38 @@
 <?php
 
-class Model_main{
+class Model_main extends Model{
   
-	public function get_data(){
-	  
+	// Get list of a files from Google Drive
+	public function get_data($pageSize = 10){
+	
     try {
-      // Include API 
-      require_once __DIR__ . '/google/api.php';
-      
-      // Get the API client and construct the service object.
+      // Connect to Google Drive 
       $client = getClient();
       $service = new Google_Service_Drive($client);
       
-      if (!$service) {
+      if (!$service || !$client) {
         throw new Exception('Connect to api is fail');
       }
       
       // Print the names and IDs for up to 10 files.
       $optParams = array(
-        'pageSize' => 10,
+        'pageSize' => $pageSize,
         'fields' => 'nextPageToken, files(id, name)'
       );
       $results = $service->files->listFiles($optParams);
+      
     } catch(Exception $e) {
-      Logger::getLogger('error')->log($e);
+      Logger::getLogger('log')->log($e);
       return false;
     }
     		
 		return $results;
 	}
 	
+	// Get files from Google Drive
 	public function get_file($arr){
 	  
 	  try {
-	    // Include API 
-      require_once __DIR__ . '/google/api.php';
-	    
   	  // Get the API client and construct the service object.
       $client = getClient();
       $service = new Google_Service_Drive($client);
@@ -49,7 +46,7 @@ class Model_main{
       
       // Create zip file
       if ($zip->open($filename, ZipArchive::CREATE)!==TRUE) {
-          exit("Невозможно открыть <$filename>\n");
+        throw new Exception("Can't open <$filename>");
       }
       
       // Create array with file id from Google drive
@@ -77,7 +74,7 @@ class Model_main{
       }
       
 	  } catch(Exception $e) {
-	    Logger::getLogger('error')->log($e);
+	    Logger::getLogger('log')->log($e);
 	    return false;
 	  }
 	  
